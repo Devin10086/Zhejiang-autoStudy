@@ -46,47 +46,94 @@ def getJoin(session, access_token, current_course, nid, cardNo):
 
 
 if __name__ == '__main__':
-    nid = os.getenv("nid")
-    cardNo = os.getenv("cardNo")
-    openid = os.getenv("openid")
+    #作为个人版本使用
+    # nid = os.getenv("nid")
+    # cardNo = os.getenv("cardNo")
+    # openid = os.getenv("openid")
+    # DD_BOT_TOKEN = os.getenv("DD_BOT_TOKEN")
+    # DD_BOT_SECRET = os.getenv("DD_BOT_SECRET")
+    DD_BOT_TOKEN = "c10cac6ad1f4e646508cc9c44b8f89b4f14e9306b9c0135080c0dfb9f805524b"
+    DD_BOT_SECRET = "SECcc4b1525e6a2f232b312ea7cf65639c7bf4ea17486a5c5f3f3245550aae6c445"
+
+    #集体打卡使用的学号集合
+    classes = ["3210105148",#TQY
+               "3210101195",#GKH
+               "3210105041",
+               "3210105026",
+               "3210300376",
+               "3210103028",
+               "3210101750",
+               "3210102914",
+               "3210104076",
+               "3210102491",
+               "3210104577",
+               "3210102480",
+               "3210103069",
+               "3210100074",
+               "3210102083",
+               "3210101664",
+               "3210103289",
+               "3210103459",
+               "3210101644",
+               "3210100537",
+               "3210100971",
+               "3210101017",
+               "3210100861",
+               "3210100574",
+               "3210100954",
+               "3210100668",
+               "3210104404",
+               "3210102866",
+               "3210104064",
+              ]
+
+    nid = "N0019000100030001"
+    cardNo = "3210105148"
+    openid = "oO-a2t2kqS3ycna4T47qSH94a3QI"
 
     session = requests.session()
     session.headers = {
         'User-Agent':
         'Mozilla/5.0 (iPhone; CPU iPhone OS 8_3 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Version/8.0 Mobile/12F70 Safari/600.1.4'
     }
-    try:
-        checkFlag = False
-
-        # 获取token
-        time.sleep(5)
-        access_token = getAccessToken(session, openid)
-
-        # 获取最新的章节
-        time.sleep(5)
-        current_course = getCurrentCourse(session, access_token)
-
-        # 签到
-        time.sleep(5)
-        res, checkFlag = getJoin(session, access_token, current_course, nid,
-                                 cardNo)
-
-        DD_BOT_TOKEN = os.getenv("DD_BOT_TOKEN")
-        DD_BOT_SECRET = os.getenv("DD_BOT_SECRET")
-        res = json.loads(res)
-        dingpush = dingPush.dingpush(
-            "青年大学习签到结果",
-            "青年大学习签到成功：\n" + "状态码：" + str(res["status"]) + "\n课程ID: " +
-            current_course + "\n签到学号: " + res["result"]["cardNo"] +
-            "\n签到时间: " + res["result"]["lastUpdTime"], "", DD_BOT_TOKEN,
-            DD_BOT_SECRET)
-        dingpush.SelectAndPush()
-    except Exception as e:
-        print("WARNING: " + str(e))
+    for i in classes:
+        cardNo = i
         try:
-            dingPush = dingPush.dingpush(
+            checkFlag = False
+
+            # 获取token
+            time.sleep(5)
+            access_token = getAccessToken(session, openid)
+
+            # 获取最新的章节
+            time.sleep(5)
+            current_course = getCurrentCourse(session, access_token)
+
+            # 签到
+            time.sleep(5)
+            res, checkFlag = getJoin(session, access_token, current_course, nid,
+                                     cardNo)
+
+
+            res = json.loads(res)
+            dingpush = dingPush.dingpush(
                 "青年大学习签到结果",
-                "青年大学习签到出现问题：\n" + str(e) + "\n是否完成签到：" + str(checkFlag), "",
-                DD_BOT_TOKEN, DD_BOT_SECRET)
+                "青年大学习签到成功：\n" + "状态码：" + str(res["status"]) + "\n课程ID: " +
+                current_course + "\n签到学号: " + res["result"]["cardNo"] +
+                "\n签到时间: " + res["result"]["lastUpdTime"], "", DD_BOT_TOKEN,
+                DD_BOT_SECRET)
+            dingpush.SelectAndPush()
         except Exception as e:
-            print("ERROR: " + str(e))
+            print("WARNING: " + str(e))
+            try:
+                dingPush = dingPush.dingpush(
+                    "青年大学习签到结果",
+                    "青年大学习签到出现问题：\n" + str(e) + "\n是否完成签到：" + str(checkFlag), "",
+                    DD_BOT_TOKEN, DD_BOT_SECRET)
+            except Exception as e:
+                print("ERROR: " + str(e))
+    print("you have finished all the task")
+    dingpush = dingPush.dingpush(
+    "成功：\n",
+    "已完成所有大学习打卡" ," ",DD_BOT_TOKEN, DD_BOT_SECRET)
+    dingpush.SelectAndPush()
