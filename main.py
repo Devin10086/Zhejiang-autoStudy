@@ -4,7 +4,7 @@ import time
 
 import requests
 
-import dingPush
+#import dingPush
 
 import base64
 import hashlib
