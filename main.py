@@ -1,10 +1,15 @@
 import json
 import os
 import time
+
 import requests
+
+#import dingPush
+
 import base64
 import hashlib
 import hmac
+
 import urllib.parse
 
 
@@ -191,24 +196,24 @@ if __name__ == '__main__':
 
 
             res = json.loads(res)
-            dingpush = dingpush(
+            mydingpush = dingpush(
                 "青年大学习签到结果",
                 "青年大学习签到成功：\n" + "状态码：" + str(res["status"]) + "\n课程ID: " +
                 current_course + "\n签到学号: " + res["result"]["cardNo"] +
                 "\n签到时间: " + res["result"]["lastUpdTime"], "", DD_BOT_TOKEN,
                 DD_BOT_SECRET)
-            dingpush.SelectAndPush()
+            mydingpush.SelectAndPush()
         except Exception as e:
             print("WARNING: " + str(e))
             try:
-                dingPush = dingpush(
+                mydingpush = dingpush(
                     "青年大学习签到结果",
                     "青年大学习签到出现问题：\n" + str(e) + "\n是否完成签到：" + str(checkFlag), "",
                     DD_BOT_TOKEN, DD_BOT_SECRET)
             except Exception as e:
                 print("ERROR: " + str(e))
     print("you have finished all the task")
-    dingpush = dingpush(
+    mydingpush = dingpush(
     "成功：\n",
-    "已完成所有大学习打卡" ," ",DD_BOT_TOKEN, DD_BOT_SECRET)
-    dingpush.SelectAndPush()
+    "已完成所有大学习打卡@陶秋宇" ," ",DD_BOT_TOKEN, DD_BOT_SECRET)
+    mydingpush.SelectAndPush()
